@@ -119,6 +119,7 @@ $(document).ready(function () {
 	});
 
 	$connect.click(function () {
+		console.log("fuck click");
 		if (websocket == null) {
 			connect(function () {
 				console.log("Connected");

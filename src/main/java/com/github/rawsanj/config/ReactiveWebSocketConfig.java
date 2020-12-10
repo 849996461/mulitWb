@@ -13,7 +13,10 @@ import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
 import reactor.core.publisher.DirectProcessor;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
+import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +27,7 @@ import static com.github.rawsanj.config.ChatConstants.WEBSOCKET_MESSAGE_MAPPING;
 @Configuration(proxyBeanMethods=false)
 public class ReactiveWebSocketConfig {
 
+	//创建向webSocket发送消息的 消费者
 	@Bean
 	public ChatWebSocketHandler webSocketHandler(RedisChatMessagePublisher redisChatMessagePublisher, RedisAtomicLong activeUserCounter) {
 		DirectProcessor<ChatMessage> messageDirectProcessor = DirectProcessor.create();

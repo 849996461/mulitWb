@@ -53,6 +53,7 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		return Mono.zip(inputMessage, outputMessage).then();
 	}
 
+	//提交数据到流 messageDirectProcessor
 	public Mono<Void> sendMessage(ChatMessage chatMessage) {
 		return Mono.fromSupplier(() -> chatMessageFluxSink.next(chatMessage)).then();
 	}

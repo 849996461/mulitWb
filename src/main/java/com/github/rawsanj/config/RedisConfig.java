@@ -48,6 +48,9 @@ public class RedisConfig {
 		return new RedisAtomicLong(ACTIVE_USER_KEY, redisConnectionFactory);
 	}
 
+	/**
+	 * 项目启动时 使用监听redis的topic
+	 */
 	@Bean
 	ApplicationRunner applicationRunner(RedisChatMessageListener redisChatMessageListener) {
 		return args -> {

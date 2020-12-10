@@ -28,13 +28,17 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 		this.activeUserCounter = activeUserCounter;
 	}
 
+	//用于建立连接 和 构建, 这个方法只会在第一次接收消息时执行
 	@Override
 	public Mono<Void> handle(WebSocketSession webSocketSession) {
-		Flux<WebSocketMessage> sendMessageFlux = messageDirectProcessor.flatMap(ObjectStringConverter::objectToString)
+		Flux<WebSocketMessage> sendMessageFlux = messageDirectProcessor
+			.flatMap(ObjectStringConverter::objectToString)
 			.map(webSocketSession::textMessage)
 			.doOnError(throwable -> log.info("Error Occurred while sending message to WebSocket.", throwable));
+		//消息直接返回客户端
 		Mono<Void> outputMessage = webSocketSession.send(sendMessageFlux);
 
+		//发布到redis
 		Mono<Void> inputMessage = webSocketSession.receive()
 			.flatMap(webSocketMessage -> redisChatMessagePublisher.publishChatMessage(webSocketMessage.getPayloadAsText()))
 			.doOnSubscribe(subscription -> {

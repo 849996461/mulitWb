@@ -31,6 +31,7 @@ public class RedisChatMessagePublisher {
 		this.objectMapper = objectMapper;
 	}
 
+	//发布消息
 	public Mono<Long> publishChatMessage(String message) {
 		Integer totalChatMessage = chatMessageCounter.incrementAndGet();
 		return Mono.fromCallable(() -> {

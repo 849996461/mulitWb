@@ -1,5 +1,6 @@
 package com.github.rawsanj.config;
 
+import com.fasterxml.jackson.databind.ser.std.CollectionSerializer;
 import com.github.rawsanj.handler.ChatWebSocketHandler;
 import com.github.rawsanj.messaging.RedisChatMessagePublisher;
 import com.github.rawsanj.model.ChatMessage;
@@ -20,6 +21,10 @@ import java.time.Duration;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.github.rawsanj.config.ChatConstants.WEBSOCKET_MESSAGE_MAPPING;
 
@@ -34,6 +39,7 @@ public class ReactiveWebSocketConfig {
 		return new ChatWebSocketHandler(messageDirectProcessor, redisChatMessagePublisher, activeUserCounter);
 	}
 
+	//wb连接
 	@Bean
 	public HandlerMapping webSocketHandlerMapping(ChatWebSocketHandler webSocketHandler) {
 		Map<String, WebSocketHandler> map = new HashMap<>();
@@ -50,4 +56,7 @@ public class ReactiveWebSocketConfig {
 		return new WebSocketHandlerAdapter();
 	}
 
+	public static void main(String[] args) {
+
+	}
 }

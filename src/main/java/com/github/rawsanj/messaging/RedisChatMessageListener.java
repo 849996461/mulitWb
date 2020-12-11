@@ -8,8 +8,10 @@ import org.springframework.data.redis.connection.ReactiveSubscription;
 import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.stereotype.Component;
+import reactor.core.publisher.ConnectableFlux;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
 
 import java.time.Duration;
 
@@ -41,6 +43,9 @@ public class RedisChatMessageListener {
 			//通过webSocket发送消息
 			.flatMap(chatWebSocketHandler::sendMessage)
 			.then();
+	}
+
+	public static void main(String[] args) {
 	}
 
 

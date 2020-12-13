@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ser.std.CollectionSerializer;
 import com.github.rawsanj.handler.ChatWebSocketHandler;
 import com.github.rawsanj.messaging.RedisChatMessagePublisher;
 import com.github.rawsanj.model.ChatMessage;
+import io.netty.util.concurrent.Promise;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,6 +16,7 @@ import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
 import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
@@ -56,7 +58,4 @@ public class ReactiveWebSocketConfig {
 		return new WebSocketHandlerAdapter();
 	}
 
-	public static void main(String[] args) {
-
-	}
 }

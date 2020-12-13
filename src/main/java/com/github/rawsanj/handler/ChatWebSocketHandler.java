@@ -5,6 +5,7 @@ import com.github.rawsanj.model.ChatMessage;
 import com.github.rawsanj.util.ObjectStringConverter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.support.atomic.RedisAtomicLong;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.reactive.socket.WebSocketHandler;
 import org.springframework.web.reactive.socket.WebSocketMessage;
 import org.springframework.web.reactive.socket.WebSocketSession;
@@ -12,6 +13,13 @@ import reactor.core.publisher.DirectProcessor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.FluxSink;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+
+import java.time.Duration;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Slf4j
 public class ChatWebSocketHandler implements WebSocketHandler {
@@ -31,14 +39,16 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 	//用于建立连接 和 构建, 这个方法只会在第一次接收消息时执行
 	@Override
 	public Mono<Void> handle(WebSocketSession webSocketSession) {
+		//这个流会被多个webSocket订阅
 		Flux<WebSocketMessage> sendMessageFlux = messageDirectProcessor
 			.flatMap(ObjectStringConverter::objectToString)
 			.map(webSocketSession::textMessage)
 			.doOnError(throwable -> log.info("Error Occurred while sending message to WebSocket.", throwable));
-		//消息直接返回客户端
+
+		//webSocketSession 订阅发布者
 		Mono<Void> outputMessage = webSocketSession.send(sendMessageFlux);
 
-		//发布到redis
+		//webSocketSession 改变接收消息的
 		Mono<Void> inputMessage = webSocketSession.receive()
 			.flatMap(webSocketMessage -> redisChatMessagePublisher.publishChatMessage(webSocketMessage.getPayloadAsText()))
 			.doOnSubscribe(subscription -> {
@@ -60,6 +70,19 @@ public class ChatWebSocketHandler implements WebSocketHandler {
 	//提交数据到流 messageDirectProcessor
 	public Mono<Void> sendMessage(ChatMessage chatMessage) {
 		return Mono.fromSupplier(() -> chatMessageFluxSink.next(chatMessage)).then();
+	}
+
+	public static void main(String[] args) {
+		Flux<Integer> just = Flux.just(1, 2, 3);
+
+		Flux<Long> interval = Flux.interval(Duration.ofMillis(1000));
+
+		for (Long aLong : interval.toIterable()) {
+			System.out.println(aLong);
+		}
+
+
+
 	}
 
 }
